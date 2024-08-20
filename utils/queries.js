@@ -69,3 +69,29 @@ const insertDepartmentData = async (department) => {
     throw "Error inserting department data into database";
   }
 };
+
+const insertRoleData = async (job_title, salary, department_id) => {
+  try {
+    const roleData = await pool.query(
+      `
+      INSERT INTO roles (job_title, salary, department_id)
+      VALUES ($1, $2, $3);`,
+      [job_title, salary, department_id]
+    );
+  } catch (err) {
+    throw "Error inserting role data into database";
+  }
+};
+
+const updateEmployeeRole = async (employee_id, role_id) => {
+  try {
+    const updateQuery = await pool.query(
+      `
+      UPDATE employees SET role_id = $1
+      WHERE id = $2;`,
+      [role_id, employee_id]
+    );
+  } catch (err) {
+    throw "Error updating employee role";
+  }
+};
