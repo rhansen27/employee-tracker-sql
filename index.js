@@ -33,3 +33,25 @@ const employeeQuestions = [
     message: "Add employee name:",
   },
 ];
+
+const init = async () => {
+  let isRunning = true;
+
+  while (isRunning) {
+    const answers = await inquirer.prompt(startingQuestions);
+    switch (answers.answer) {
+      case "View all employees":
+        let viewEmployeeData = await getEmployees();
+        console.table(viewEmployeeData);
+        console.log("Viewing all employees");
+        break;
+      case "Add an employee":
+        let roleList = await getRoles();
+        let roleNames = roleList.map((role) => role.job_title);
+        let employeeData = await getEmployees();
+        let managerNames = employeeData.map(
+          (manager) => `${manager.first_name} ${manager.last_name}`
+        );
+    }
+  }
+};
