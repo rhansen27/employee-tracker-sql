@@ -56,3 +56,16 @@ const insertEmployeeData = async (
     throw "Error inserting employee data into database";
   }
 };
+
+const insertDepartmentData = async (department) => {
+  try {
+    const departmentData = await pool.query(
+      `
+      INSERT INTO departments (department)
+      VALUES ($1);`,
+      [department]
+    );
+  } catch (err) {
+    throw "Error inserting department data into database";
+  }
+};
