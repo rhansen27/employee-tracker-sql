@@ -95,3 +95,13 @@ const updateEmployeeRole = async (employee_id, role_id) => {
     throw "Error updating employee role";
   }
 };
+
+module.exports = {
+  getRoles,
+  getDepartments,
+  getEmployees,
+  insertEmployeeData,
+  insertDepartmentData,
+  insertRoleData,
+  updateEmployeeRole,
+};
