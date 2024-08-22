@@ -139,6 +139,50 @@ const init = async () => {
         await updateEmployeeRole(selectEmployee.id, selectRole.id);
         console.log("Employee role updated");
         break;
+
+      case "View all roles":
+        const viewAllRoles = await getRoles();
+        console.table(viewAllRoles);
+        break;
+
+      case "Add a role":
+        let departmentList = await getDepartments();
+        let departmentNames = departmentList.map(
+          (department) => department.department
+        );
+
+        const roleQuestions = [
+          {
+            type: "text",
+            name: "role",
+            message: "Add role name:",
+          },
+          {
+            type: "number",
+            name: "salary",
+            message: "Add role salary:",
+          },
+          {
+            type: "list",
+            name: "department",
+            message: "Choose department:",
+            choices: departmentNames,
+          },
+        ];
+
+        const roleAnswers = await inquirer.prompt(roleQuestions);
+
+        const roleName = roleAnswers.role;
+        const salary = roleAnswers.salary;
+        const departmentTitle = roleAnswers.department;
+
+        const selectedDepartment = departmentList.find(
+          (department) => departmentTitle === department.department
+        );
+
+        await insertRoleData(roleName, salary, selectedDepartment.id);
+        console.log("Role added");
+        break;
     }
   }
 };
