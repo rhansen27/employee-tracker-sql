@@ -52,6 +52,36 @@ const init = async () => {
         let managerNames = employeeData.map(
           (manager) => `${manager.first_name} ${manager.last_name}`
         );
+
+        const employeeQuestions = [
+          {
+            type: "text",
+            name: "first_name",
+            message: "Add employee first name:",
+          },
+          {
+            type: "text",
+            name: "last_name",
+            message: "Add employee last name:",
+          },
+          {
+            type: "list",
+            name: "role",
+            message: "Choose employee role:",
+            choices: roleNames,
+          },
+          {
+            type: "list",
+            name: "manager",
+            message: "Choose employee manager:",
+            choices: ["None", ...managerNames],
+          },
+        ];
+        const employeeAnswers = await inquirer.prompt;
+
+        const selectedRole = roleList.find(
+          (role) => role.job_title === employeeAnswers.role
+        );
     }
   }
 };
