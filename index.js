@@ -6,6 +6,7 @@ const {
   insertEmployeeData,
   insertRoleData,
   updateEmployeeRole,
+  insertDepartmentData,
 } = require("./utils/queries");
 
 const startingQuestions = [
@@ -188,6 +189,31 @@ const init = async () => {
         const viewAllDepartments = await getDepartments();
         console.table(viewAllDepartments);
         break;
+
+      case "Add a department":
+        const departmentQuestions = [
+          {
+            type: "text",
+            name: "department",
+            message: "Add department name:",
+          },
+        ];
+
+        const departmentAnswers = await inquirer.prompt(departmentQuestions);
+
+        const departmentName = departmentAnswers.department;
+        await insertDepartmentData(departmentName);
+        console.log("Department added");
+        break;
+
+      case "Quit":
+        isRunning = false;
+        break;
+      default:
+        console.log("Invalid choice");
+        break;
     }
   }
 };
+
+init();
