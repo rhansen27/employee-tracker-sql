@@ -183,6 +183,11 @@ const init = async () => {
         await insertRoleData(roleName, salary, selectedDepartment.id);
         console.log("Role added");
         break;
+
+      case "View all departments":
+        const viewAllDepartments = await getDepartments();
+        console.table(viewAllDepartments);
+        break;
     }
   }
 };
