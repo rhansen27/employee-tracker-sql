@@ -82,6 +82,63 @@ const init = async () => {
         const selectedRole = roleList.find(
           (role) => role.job_title === employeeAnswers.role
         );
+
+        const selectedManager = employeeData.find(
+          (employee) =>
+            `${employee.first_name} ${employee.last_name}` ===
+            employeeAnswers.manager
+        );
+
+        const firstName = employeeAnswers.first_name;
+        const lastName = employeeAnswers.last_name;
+        const roleId = selectedRole.id;
+        const managerId = selectedManager ? selectedManager.id : null;
+
+        await insertEmployeeData(firstName, lastName, roleId, managerId);
+        console.log("Employee added");
+        break;
+
+      case "Update an employee role":
+        const employees = await getEmployees();
+        let employeeNames = employees.map(
+          (employee) => `${employee.first_name} ${employee.last_name}`
+        );
+
+        const roles = await getRoles();
+        let roleTitles = roles.map((role) => role.job_title);
+
+        const updateEmployeeQuestions = [
+          {
+            type: "list",
+            name: "employee",
+            message: "Choose employee to update:",
+            choices: employeeNames,
+          },
+          {
+            type: "list",
+            name: "role",
+            message: "Choose new role:",
+            choices: roleTitles,
+          },
+        ];
+
+        const updateEmployeeAnswers = await inquirer.prompt(
+          updateEmployeeQuestions
+        );
+
+        const selectEmployee = employees.find(
+          (employee) =>
+            `${employee.first_name} ${employee.last_name}` ===
+            updateEmployeeAnswers.employee
+        );
+
+        const selectRole = roles.find(
+          (role) => role.job_title === updateEmployeeAnswers.role
+        );
+
+        await updateEmployeeRole(selectEmployee.id, selectRole.id);
+        console.log("Employee role updated");
+        break;
     }
   }
 };
