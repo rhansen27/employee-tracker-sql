@@ -49,64 +49,65 @@ const init = async () => {
         break;
       case "Add Employee":
         let roleList = await getRoles();
-        let roleNames = roleList.map((role) => role.job_title);
+        let roleNames = roleList.map((role) => role.title);
+        console.log(roleNames);
 
-        let employeeData = await getEmployees();
+        // let employeeData = await getEmployees();
 
-        let managerNames = employeeData.map(
-          (manager) => `${manager.first_name} ${manager.last_name}`
-        );
+        // let managerNames = employeeData.map(
+        //   (manager) => `${manager.first_name} ${manager.last_name}`
+        // );
 
         // ask questions about employee (name, department, role, manager)
-        const employeeQuestions = [
-          {
-            type: "text",
-            name: "firstName",
-            message: "Add employee first name:",
-          },
-          {
-            type: "text",
-            name: "lastName",
-            message: "Add employee last name:",
-          },
-          {
-            type: "list",
-            name: "role",
-            message: "Select employees role",
-            choices: roleNames,
-          },
-          {
-            type: "list",
-            name: "manager",
-            message: "Select employees manager",
-            choices: ["None", ...managerNames],
-          },
-        ];
+        // const employeeQuestions = [
+        //   {
+        //     type: "text",
+        //     name: "firstName",
+        //     message: "Add employee first name:",
+        //   },
+        //   {
+        //     type: "text",
+        //     name: "lastName",
+        //     message: "Add employee last name:",
+        //   },
+        //   {
+        //     type: "list",
+        //     name: "role",
+        //     message: "Select employees role",
+        //     choices: roleNames,
+        //   },
+        //   {
+        //     type: "list",
+        //     name: "manager",
+        //     message: "Select employees manager",
+        //     choices: ["None", ...managerNames],
+        //   },
+        // ];
 
-        const employeeAnswers = await inquirer.prompt(employeeQuestions);
+        // const employeeAnswers = await inquirer.prompt(employeeQuestions);
 
-        // add to database
+        // // add to database
 
-        const selectedRole = roleList.find(
-          (role) => role.job_title === employeeAnswers.role
-        );
+        // const selectedRole = roleList.find(
+        //   (role) => role.title === employeeAnswers.role
+        // );
 
-        // find employee object, see if employee name matches name selected from prompt
-        const selectedManager = employeeData.find(
-          (employee) =>
-            `${employee.first_name} ${employee.last_name}` ===
-            employeeAnswers.manager
-        );
+        // // find employee object, see if employee name matches name selected from prompt
+        // const selectedManager = employeeData.find(
+        //   (employee) =>
+        //     `${employee.first_name} ${employee.last_name}` ===
+        //     employeeAnswers.manager
+        // );
 
-        // employee
-        const firstName = employeeAnswers.firstName;
-        const lastName = employeeAnswers.lastName;
-        const roleId = selectedRole.id;
-        const managerId = selectedManager ? selectedManager.id : null;
+        // // employee
+        // const firstName = employeeAnswers.firstName;
+        // const lastName = employeeAnswers.lastName;
+        // const roleId = selectedRole.id;
+        // const managerId = selectedManager ? selectedManager.id : null;
 
-        await insertEmployeeData(firstName, lastName, roleId, managerId);
+        // await insertEmployeeData(firstName, lastName, roleId, managerId);
 
-        console.log("Add Employee");
+        // console.log("Add Employee");
         break;
       case "Update Employee Role":
         // run a query to get employees

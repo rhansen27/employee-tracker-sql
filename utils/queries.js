@@ -5,6 +5,7 @@ const getRoles = async () => {
     const roles = await pool.query(`
         SELECT * FROM roles;
         `);
+    // console.log(roles);
     return roles.rows;
   } catch (err) {
     throw "Error fetching roles";
