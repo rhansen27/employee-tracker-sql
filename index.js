@@ -1,27 +1,27 @@
-const inquirer = require("inquirer");
-const {
+import inquirer from "inquirer";
+import {
   getRoles,
   getDepartments,
   getEmployees,
   insertEmployeeData,
+  insertDepartmentData,
   insertRoleData,
   updateEmployeeRole,
-  insertDepartmentData,
-} = require("./utils/queries");
+} from "./utils/queries.js";
 
-const startingQuestions = [
+const initialQuestions = [
   {
     type: "list",
     name: "answer",
     message: "What would you like to do?",
     choices: [
-      "View all employees",
-      "Add an employee",
-      "Update an employee role",
-      "View all roles",
-      "Add a role",
-      "View all departments",
-      "Add a department",
+      "View All Employees",
+      "Add Employee",
+      "Update Employee Role",
+      "View All Roles",
+      "Add Role",
+      "View All Departments",
+      "Add Department",
       "Quit",
     ],
   },
@@ -39,86 +39,100 @@ const init = async () => {
   let isRunning = true;
 
   while (isRunning) {
-    const answers = await inquirer.prompt(startingQuestions);
+    let answers = await inquirer.prompt(initialQuestions);
     switch (answers.answer) {
-      case "View all employees":
+      case "View All Employees":
+        // run query and display all employees table
         let viewEmployeeData = await getEmployees();
         console.table(viewEmployeeData);
-        console.log("Viewing all employees");
+        console.log("View All Employees");
         break;
-      case "Add an employee":
+      case "Add Employee":
         let roleList = await getRoles();
         let roleNames = roleList.map((role) => role.job_title);
+
         let employeeData = await getEmployees();
+
         let managerNames = employeeData.map(
           (manager) => `${manager.first_name} ${manager.last_name}`
         );
 
+        // ask questions about employee (name, department, role, manager)
         const employeeQuestions = [
           {
             type: "text",
-            name: "first_name",
+            name: "firstName",
             message: "Add employee first name:",
           },
           {
             type: "text",
-            name: "last_name",
+            name: "lastName",
             message: "Add employee last name:",
           },
           {
             type: "list",
             name: "role",
-            message: "Choose employee role:",
+            message: "Select employees role",
             choices: roleNames,
           },
           {
             type: "list",
             name: "manager",
-            message: "Choose employee manager:",
+            message: "Select employees manager",
             choices: ["None", ...managerNames],
           },
         ];
-        const employeeAnswers = await inquirer.prompt;
+
+        const employeeAnswers = await inquirer.prompt(employeeQuestions);
+
+        // add to database
 
         const selectedRole = roleList.find(
           (role) => role.job_title === employeeAnswers.role
         );
 
+        // find employee object, see if employee name matches name selected from prompt
         const selectedManager = employeeData.find(
           (employee) =>
             `${employee.first_name} ${employee.last_name}` ===
             employeeAnswers.manager
         );
 
-        const firstName = employeeAnswers.first_name;
-        const lastName = employeeAnswers.last_name;
+        // employee
+        const firstName = employeeAnswers.firstName;
+        const lastName = employeeAnswers.lastName;
         const roleId = selectedRole.id;
         const managerId = selectedManager ? selectedManager.id : null;
 
         await insertEmployeeData(firstName, lastName, roleId, managerId);
-        console.log("Employee added");
-        break;
 
-      case "Update an employee role":
+        console.log("Add Employee");
+        break;
+      case "Update Employee Role":
+        // run a query to get employees
+        // make list of employee names
         const employees = await getEmployees();
         let employeeNames = employees.map(
           (employee) => `${employee.first_name} ${employee.last_name}`
         );
 
+        // run a query to select employee roles
         const roles = await getRoles();
         let roleTitles = roles.map((role) => role.job_title);
 
+        // prompt user to select from list of employees
+        // prompt user to select role and update
         const updateEmployeeQuestions = [
           {
             type: "list",
             name: "employee",
-            message: "Choose employee to update:",
+            message: "Select employee to update",
             choices: employeeNames,
           },
           {
             type: "list",
             name: "role",
-            message: "Choose new role:",
+            message: "Select employees new role",
             choices: roleTitles,
           },
         ];
@@ -126,6 +140,9 @@ const init = async () => {
         const updateEmployeeAnswers = await inquirer.prompt(
           updateEmployeeQuestions
         );
+
+        // get selected employee from employees array based on prompt answer
+        // get selected role from roles array based on prompt answer
 
         const selectEmployee = employees.find(
           (employee) =>
@@ -137,42 +154,48 @@ const init = async () => {
           (role) => role.job_title === updateEmployeeAnswers.role
         );
 
+        // run update query to update employee role_id where id = selected employee_id
         await updateEmployeeRole(selectEmployee.id, selectRole.id);
-        console.log("Employee role updated");
-        break;
 
-      case "View all roles":
+        console.log("Update Employee Role");
+        break;
+      case "View All Roles":
+        // run query to select all roles
         const viewAllRoles = await getRoles();
+
+        // display as table (console.table)
         console.table(viewAllRoles);
         break;
-
-      case "Add a role":
+      case "Add Role":
+        // ****************************************************
         let departmentList = await getDepartments();
         let departmentNames = departmentList.map(
           (department) => department.department
         );
 
+        // promt user about roles (role)
         const roleQuestions = [
           {
             type: "text",
             name: "role",
-            message: "Add role name:",
+            message: "Enter role name",
           },
           {
             type: "number",
             name: "salary",
-            message: "Add role salary:",
+            message: "Enter salary",
           },
           {
             type: "list",
             name: "department",
-            message: "Choose department:",
+            message: "Select department for this role",
             choices: departmentNames,
           },
         ];
 
         const roleAnswers = await inquirer.prompt(roleQuestions);
 
+        // insert into roles table
         const roleName = roleAnswers.role;
         const salary = roleAnswers.salary;
         const departmentTitle = roleAnswers.department;
@@ -182,35 +205,37 @@ const init = async () => {
         );
 
         await insertRoleData(roleName, salary, selectedDepartment.id);
-        console.log("Role added");
+        console.log("Added Role");
         break;
-
-      case "View all departments":
-        const viewAllDepartments = await getDepartments();
-        console.table(viewAllDepartments);
+      case "View All Departments":
+        // run a query to get departments
+        const viewDepartments = await getDepartments();
+        // console.table display departments
+        console.table(viewDepartments);
         break;
-
-      case "Add a department":
+      case "Add Department":
+        // prompt user about department
         const departmentQuestions = [
           {
             type: "text",
             name: "department",
-            message: "Add department name:",
+            message: "Enter department name",
           },
         ];
 
         const departmentAnswers = await inquirer.prompt(departmentQuestions);
 
+        // insert department into department table
         const departmentName = departmentAnswers.department;
         await insertDepartmentData(departmentName);
-        console.log("Department added");
+        console.log("Added Department");
         break;
-
       case "Quit":
         isRunning = false;
+        console.log("Goodbye!");
         break;
       default:
-        console.log("Invalid choice");
+        console.log("Please select a valid option");
         break;
     }
   }

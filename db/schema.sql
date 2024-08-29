@@ -3,27 +3,27 @@ CREATE DATABASE employees_db;
 
 \c employees_db;
 
-CREATE TABLE departments(
+CREATE TABLE departments (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(50) NOT NULL
+    department VARCHAR(50) NOT NULL
 );
 
-CREATE TABLE roles(
+CREATE TABLE roles (
     id SERIAL PRIMARY KEY,
     job_title VARCHAR(50) NOT NULL,
     salary INT NOT NULL,
-    department_id INT NOT NULL, 
+    department_id INT NOT NULL,
     FOREIGN KEY (department_id)
     REFERENCES departments(id)
     ON DELETE SET NULL
 );
 
-CREATE TABLE employees(
+CREATE TABLE employees (
     id SERIAL PRIMARY KEY,
-    first_name VARCAHR(50) NOT NULL,
+    first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
     role_id INT NOT NULL,
-    manager_id INT, 
+    manager_id INT,
     FOREIGN KEY (manager_id)
     REFERENCES employees(id)
     ON DELETE SET NULL,
